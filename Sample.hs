@@ -11,8 +11,11 @@ import qualified Data.ByteString.Lazy.Char8 as BLC
 import System.Posix.Files
 
 s3Connection :: AWSConnection
-{- Replace your own HOST, AWS_ACCESS_KEY_ID and AWS_ACCESS_KEY_SECRET. -}
+{- Replace to your own HOST, AWS_ACCESS_KEY_ID and AWS_ACCESS_KEY_SECRET. -}
 s3Connection = AWSConnection "HOST" 8080 "AWS_ACCESS_KEY_ID" "AWS_ACCESS_KEY_SECRET"
+
+{- Replace to BUCKET_NAME you like. -}
+bucketName = "BUCKET_NAME"
 
 main = do
   let conn = s3Connection
@@ -21,20 +24,20 @@ main = do
   f <- BLC.readFile filename
   contentFS <- getFileStatus filename
   let offset = fileSize contentFS
-  let obj1 = S3Object "www" "test.png" "png/image" [("Content-Length",(show offset))] f
+  let obj1 = S3Object bucketName "test.png" "png/image" [("Content-Length",(show offset))] f
   res1 <- sendObject conn obj1
   either (putStrLn . prettyReqError)
          (return $ putStrLn "Successfully uploaded.")
          res1
   {- Get "www/test.png" and save it as "download.png" -}
-  let obj2 = S3Object "www" "test.png" "" [] BLC.empty
+  let obj2 = S3Object bucketName "test.png" "" [] BLC.empty
   res2 <- getObject conn obj2
   either (putStrLn . prettyReqError)
          (\x -> do putStrLn "Successfully retrieved."
                    BL.writeFile "./download.png" (obj_data x))
          res2
   {- Delete "www/test.png" -}
-  let obj3 = S3Object "www" "test.png" "" [] BLC.empty
+  let obj3 = S3Object bucketName "test.png" "" [] BLC.empty
   res3 <- deleteObject conn obj3
   either (putStrLn . prettyReqError)
          (return $ putStrLn "Successfully removed.")
