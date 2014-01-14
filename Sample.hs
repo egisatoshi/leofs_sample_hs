@@ -1,3 +1,6 @@
+--
+-- A sample S3 program in Haskell with hS3 libarary
+--
 import Network.AWS.S3Bucket
 import Network.AWS.S3Object
 import Network.AWS.AWSConnection
@@ -21,18 +24,18 @@ main = do
   let obj1 = S3Object "www" "test.png" "png/image" [("Content-Length",(show offset))] f
   res1 <- sendObject conn obj1
   either (putStrLn . prettyReqError)
-         (const $ putStrLn ("Successfully uploaded."))
+         (return $ putStrLn "Successfully uploaded.")
          res1
   {- Get "www/test.png" and save it as "download.png" -}
   let obj2 = S3Object "www" "test.png" "" [] BLC.empty
   res2 <- getObject conn obj2
   either (putStrLn . prettyReqError)
-         (\x -> do putStrLn ("Successfully retrieved.")
+         (\x -> do putStrLn "Successfully retrieved."
                    BL.writeFile "./download.png" (obj_data x))
          res2
   {- Delete "www/test.png" -}
   let obj3 = S3Object "www" "test.png" "" [] BLC.empty
   res3 <- deleteObject conn obj3
   either (putStrLn . prettyReqError)
-         (const $ putStrLn ("Successfully removed."))
+         (return $ putStrLn "Successfully removed.")
          res3
