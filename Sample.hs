@@ -8,8 +8,8 @@ import qualified Data.ByteString.Lazy.Char8 as BLC
 import System.Posix.Files
 
 s3Connection :: AWSConnection
-{- Replace your own AWS_ACCESS_KEY_ID and AWS_ACCESS_KEY_SECRET. -}
-s3Connection = AWSConnection "egison.org" 8080 "AWS_ACCESS_KEY_ID" "AWS_ACCESS_KEY_SECRET"
+{- Replace your own HOST, AWS_ACCESS_KEY_ID and AWS_ACCESS_KEY_SECRET. -}
+s3Connection = AWSConnection "HOST" 8080 "AWS_ACCESS_KEY_ID" "AWS_ACCESS_KEY_SECRET"
 
 main = do
   let conn = s3Connection
